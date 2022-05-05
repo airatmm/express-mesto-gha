@@ -43,7 +43,7 @@ const likeCard = async (req, res) => {
       { new: true },
     );
     res.status(200).send(like);
-  } catch {
+  } catch (err) {
     res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
   }
 };
@@ -56,7 +56,7 @@ const dislikeCard = async (req, res) => {
       { new: true },
     );
     res.status(200).send(like);
-  } catch {
+  } catch (err) {
     res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
   }
 };
