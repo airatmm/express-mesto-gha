@@ -42,6 +42,9 @@ const likeCard = async (req, res) => {
       { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
       { new: true },
     );
+    if (!req.params.cardId) {
+      res.status(400).send({ message: 'Нет карточки с таким id' });
+    }
     res.status(200).send(like);
   } catch (err) {
     res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
