@@ -5,24 +5,24 @@ const getCard = async (req, res) => {
     const cards = await Card.find({}).populate('owner').exec();
     res.status(200).send(cards);
   } catch (err) {
-    res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`})
+    res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
   }
 };
 
 const createCard = async (req, res) => {
   try {
-    const owner = req.user._id
-    const {name, link} = req.body;
-    const card = new Card({name, link, owner});
+    const owner = req.user._id;
+    const { name, link } = req.body;
+    const card = new Card({ name, link, owner });
     res.status(201).send(await card.save());
   } catch (err) {
-    if (err.name === "ValidationError") {
+    if (err.name === 'ValidationError') {
       res.status(400).send({
-        message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`
+        message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`,
       });
       return;
     }
-    res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`})
+    res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
   }
 };
 
@@ -31,38 +31,40 @@ const deleteCard = async (req, res) => {
     const card = await Card.findByIdAndDelete(req.params.cardId);
     res.status(200).send(card);
   } catch (err) {
-    res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`});
+    res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
   }
-}
+};
 
 const likeCard = async (req, res) => {
   try {
-    const like = await Card.findByIdAndUpdate(req.params.cardId,
-      {$addToSet: {likes: req.user._id}}, // добавить _id в массив, если его там нет
-      {new: true}
+    const like = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
+      { new: true },
     );
     res.status(200).send(like);
   } catch {
-    res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`});
+    res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
   }
-}
+};
 
 const dislikeCard = async (req, res) => {
   try {
-    const like = await Card.findByIdAndUpdate(req.params.cardId,
-      {$pull: {likes: req.user._id}}, // убрать _id из массива
-      {new: true}
+    const like = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $pull: { likes: req.user._id } }, // убрать _id из массива
+      { new: true },
     );
     res.status(200).send(like);
   } catch {
-    res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`});
+    res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
   }
-}
+};
 
 module.exports = {
   getCard,
   createCard,
   deleteCard,
   likeCard,
-  dislikeCard
-}
+  dislikeCard,
+};

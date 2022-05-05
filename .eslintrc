@@ -9,7 +9,7 @@
     "sourceType": "module"
   },
   "rules": {
-    "eslint no-underscore-dangle": [
+    "no-underscore-dangle": [
       "error",
       {
         "allow": [
