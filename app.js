@@ -28,7 +28,7 @@ app.use('/', users);
 app.use('/', cards);
 
 app.use((req, res) => {
-  res.status(404).send('Ooops! Page not found');
+  res.status(404).send({ message: 'Ooops! Page not found' });
 });
 
 // подключаемся к серверу mongo
