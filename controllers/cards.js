@@ -32,7 +32,7 @@ const deleteCard = async (req, res) => {
     res.status(200).send(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({ message: `Нет карточки с таким id` });
+      res.status(400).send({ message: 'Нет карточки с таким id' });
       return;
     }
     res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
@@ -49,7 +49,7 @@ const likeCard = async (req, res) => {
     res.status(200).send(like);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({ message: `Нет карточки с таким id` });
+      res.status(400).send({ message: 'Нет карточки с таким id' });
       return;
     }
     res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
@@ -66,7 +66,7 @@ const dislikeCard = async (req, res) => {
     res.status(200).send(like);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({ message: `Нет карточки с таким id` });
+      res.status(400).send({ message: 'Нет карточки с таким id' });
       return;
     }
     res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
