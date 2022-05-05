@@ -52,7 +52,11 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { name, about } = req.body;
-    const user = await User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true });
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { name, about },
+      { new: true, runValidators: true },
+    );
     res.status(200).send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
