@@ -1,31 +1,68 @@
-[![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
+[![Tests](https://github.com/airatmm/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/airatmm/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/airatmm/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/airatmm/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
+
 # Проект Mesto фронтенд + бэкенд
 
+## Стек
 
-
-## Настройка бейджей статуса тестов
-Перед началом работы над проектом рекомендуется исправить бейджи, отражающие статус прохождения тестов.
-Для этого замените разметку бейджей на следующий фрагмент, подставив вместо `${имя_пользователя}` и `${имя_репозитория}` соответствующие значения.
-
-```
-[![Tests for sprint 13](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-13-sprint.yml) 
-
-[![Tests for sprint 14](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-14-sprint.yml)
-```
+* Node.js
+* Express
+* MongoDB
 
 
 ## Директории
 
-`/routes` — папка с файлами роутера  
-`/controllers` — папка с файлами контроллеров пользователя и карточки   
-`/models` — папка с файлами описания схем пользователя и карточки  
+* `/routes` — папка с файлами роутера  
+* `/controllers` — папка с файлами контроллеров пользователя и карточки   
+* `/models` — папка с файлами описания схем пользователя и карточки  
   
-Остальные директории вспомогательные, создаются при необходимости разработчиком
+## Запуск проекта локально
 
-## Запуск проекта
+1. Клонировать проект
+2. Установить зависимости 
+```
+npm i
+```
+3. Запустить проект
+```
+npm start
+```
+Проект запустится по адресу http://localhost:3000/
 
-`npm run start` — запускает сервер   
-`npm run dev` — запускает сервер с hot-reload
+## Схемы, модели, контроллеры, роуты, ошибки
+Поля схемы пользователя:
 
+- name — имя пользователя, строка от 2 до 30 символов, обязательное поле;
+- about — информация о пользователе, строка от 2 до 30 символов, обязательное поле;
+- avatar — ссылка на аватарку, строка, обязательное поле. В следующем спринте вы напишите собственное решение для валидации этого поля.
+
+Поля схемы карточки:
+
+- name — имя карточки, строка от 2 до 30 символов, обязательное поле;
+- link — ссылка на картинку, строка, обязательно поле.
+- owner — ссылка на модель автора карточки, тип ObjectId, обязательное поле;
+- likes — список лайкнувших пост пользователей, массив ObjectId, по умолчанию — пустой массив (поле default);
+- createdAt — дата создания, тип Date, значение по умолчанию Date.now.
+
+Созданы контроллеры и роуты для пользователей
+
+- GET /users — возвращает всех пользователей
+- GET /users/:userId - возвращает пользователя по \_id
+- POST /users — создаёт пользователя
+- PATCH /users/me — обновляет профиль
+- PATCH /users/me/avatar — обновляет аватар
+
+Созданы контроллеры и роуты для карточек
+
+- GET /cards — возвращает все карточки
+- POST /cards — создаёт карточку
+- DELETE /cards/:cardId — удаляет карточку по идентификатору
+- PUT /cards/:cardId/likes — поставить лайк карточке
+- DELETE /cards/:cardId/likes — убрать лайк с карточки
+
+Реализована обработка ошибок
+
+- 400 — переданы некорректные данные в методы создания карточки, пользователя, обновления аватара пользователя или профиля;
+- 404 — карточка или пользователь не найден.
+- 500 — ошибка по-умолчанию.
 
 https://github.com/airatmm/express-mesto-gha
