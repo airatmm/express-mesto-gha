@@ -29,10 +29,14 @@ const createCard = async (req, res) => {
 const deleteCard = async (req, res) => {
   try {
     const card = await Card.findByIdAndDelete(req.params.cardId);
+    if (!card) {
+      res.status(404).send({ message: 'Нет карточки с таким id' });
+      return;
+    }
     res.status(200).send(card);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({ message: 'Нет карточки с таким id' });
+      res.status(400).send({ message: 'Некорректный id карточки' });
       return;
     }
     res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
@@ -46,10 +50,14 @@ const likeCard = async (req, res) => {
       { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
       { new: true },
     );
+    if (!like) {
+      res.status(404).send({ message: 'Нет карточки с таким id' });
+      return;
+    }
     res.status(200).send(like);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({ message: 'Нет карточки с таким id' });
+      res.status(400).send({ message: 'Некорректный id карточки' });
       return;
     }
     res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
@@ -63,10 +71,14 @@ const dislikeCard = async (req, res) => {
       { $pull: { likes: req.user._id } }, // убрать _id из массива
       { new: true },
     );
+    if (!like) {
+      res.status(404).send({ message: 'Нет карточки с таким id' });
+      return;
+    }
     res.status(200).send(like);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({ message: 'Нет карточки с таким id' });
+      res.status(400).send({ message: 'Некорректный id карточки' });
       return;
     }
     res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
