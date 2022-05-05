@@ -11,19 +11,31 @@ const getUsers = async (req, res) => {
 
 const getUserByID = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.params.userId);
     res.status(200).send(user);
   } catch (err) {
-    res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`})
+    if (err.kind === "ObjectId") {
+      res.status(404).send({
+        message: `Произошла ошибка. Пользователь с таким id не найден: ${err.message}`
+      });
+      return;
+    }
+    res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`});
   }
 }
 
 const createUser = async (req, res) => {
-  try {
+    try {
     const {name, about, avatar} = req.body;
     const user = new User({name, about, avatar});
     res.status(201).send(await user.save());
   } catch (err) {
+    if (err.name === "ValidationError") {
+      res.status(400).send({
+        message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`
+      });
+      return;
+    }
     res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`})
   }
 }
@@ -34,16 +46,28 @@ const updateUser = async (req, res) => {
     const user = await User.findByIdAndUpdate(req.user._id, {name, about}, {new: true});
     res.status(200).send(user);
   } catch (err) {
+    if (err.name === "ValidationError") {
+      res.status(400).send({
+        message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`
+      });
+      return;
+    }
     res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`})
   }
 }
 
-const updateAvatar = async (req, res, next) => {
-  try {
+const updateAvatar = async (req, res) => {
   const {avatar} = req.body;
+  try {
     const user = await User.findByIdAndUpdate(req.user._id, {avatar}, {new: true});
     res.status(200).send(user);
   } catch (err) {
+    if (err.name === "ValidationError") {
+      res.status(400).send({
+        message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`
+      });
+      return;
+    }
     res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`})
   }
 }

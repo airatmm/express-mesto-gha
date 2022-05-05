@@ -16,14 +16,20 @@ const createCard = async (req, res) => {
     const card = new Card({name, link, owner});
     res.status(201).send(await card.save());
   } catch (err) {
+    if (err.name === "ValidationError") {
+      res.status(400).send({
+        message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`
+      });
+      return;
+    }
     res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`})
   }
 };
 
 const deleteCard = async (req, res) => {
   try {
-    const cardDelete = await Card.findByIdAndDelete(req.params.cardId);
-    res.status(200).send(cardDelete);
+    const card = await Card.findByIdAndDelete(req.params.cardId);
+    res.status(200).send(card);
   } catch (err) {
     res.status(500).send({message: `На сервере произошла ошибка: ${err.message}`});
   }
