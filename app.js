@@ -7,12 +7,6 @@ const { cards } = require('./routes/cards');
 
 const app = express();
 
-// перед сдачей проекта удалить
-// app.use((req, res, next) => {
-//   console.log(req.method, req.url);
-//   next();
-// });
-
 app.use((req, res, next) => {
   req.user = {
     _id: '6273e90c13add9d629248071', // вставьте сюда _id созданного в предыдущем пункте пользователя, временное решение авторизации
