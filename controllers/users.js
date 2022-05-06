@@ -13,9 +13,11 @@ const getUserByID = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     if (!user) {
-      const error = new Error('Пользователь по заданному id отсутствует в базе');
-      error.statusCode = 404;
-      throw error;
+      res.status(404).send({ message: "Пользователь по заданному id отсутствует в базе" });
+      return;
+      // const error = new Error('Пользователь по заданному id отсутствует в базе');
+      // error.statusCode = 404;
+      // throw error;
     }
     res.status(200).send(user);
   } catch (err) {
@@ -25,10 +27,10 @@ const getUserByID = async (req, res) => {
       });
       return;
     }
-    if (err.statusCode === 404) {
-      res.status(404).send({ message: err.message });
-      return;
-    }
+    // if (err.statusCode === 404) {
+    //   res.status(404).send({ message: err.message });
+    //   return;
+    // }
     res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
   }
 };
