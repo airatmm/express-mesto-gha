@@ -83,7 +83,7 @@ const updateAvatar = async (req, res) => {
       });
       return;
     }
-    ////// ??????????????
+    /// /// ??????????????
     // if (err.name === 'CastError') {
     //   res.status(404).send({
     //     message: `Неверный формат id ${err.name} - ${err.message} (Нет юзера с таким id)`,
