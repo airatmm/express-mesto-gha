@@ -1,57 +1,141 @@
-const User = require('../models/user');
+const bcrypt = require('bcrypt');
 
-const getUsers = async (req, res) => {
+const User = require('../models/user');
+const { getToken } = require('../utils/jwt');
+const BadRequestError = require('../errors/BadRequestError');
+const NotFoundError = require('../errors/NotFoundError');
+const ConflictError = require('../errors/ConflictError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
+const DUPLICATE_MONGOOSE_ERROR_CODE = 11000;
+const SALT_ROUNDS = 10;
+
+const getUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
     res.status(200).send(users);
   } catch (err) {
-    res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
+    next(err);
   }
 };
 
-const getUserByID = async (req, res) => {
+const getUserByID = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.userId);
-    if (!user) {
-      res.status(404).send({ message: 'Пользователь по заданному id отсутствует в базе' });
+    //.orFail(() => new NotFoundError('Пользователь по заданному id отсутствует в базе(getUserByID)'));
+   if (!user) {
+     next(new NotFoundError('Пользователь по заданному id отсутствует в базе getUserByID'));
+     return;
+   //    // res.status(404).send({ message: 'Пользователь по заданному id отсутствует в базе' });
+   //    // return;
+   }
+    res.status(200).send(user);
+  } catch (err) {
+    if (err.name === 'CastError') {
+      next(new BadRequestError('Переданы некорректные данные getUserByID'));
       return;
-      // const error = new Error('Пользователь по заданному id отсутствует в базе');
-      // error.statusCode = 404;
-      // throw error;
+    }
+    next(err);
+  }
+};
+
+const getCurrentUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId);
+    console.log(user);
+      //.orFail(() => new NotFoundError('Пользователь по заданному id отсутствует в базе'));
+     if (!user) {
+
+        next(new NotFoundError('Пользователь по заданному id отсутствует в базе getCurrentUser'));
+        return;
+    //   res.status(404).send({ message: 'Пользователь по заданному id отсутствует в базе' });
+    //   return;
     }
     res.status(200).send(user);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({
-        message: `Неверный формат id ${err.name} - ${err.message}`,
-      });
+      next(new BadRequestError('Переданы некорректные данные getCurrentUser'));
       return;
     }
-    // if (err.statusCode === 404) {
-    //   res.status(404).send({ message: err.message });
-    //   return;
-    // }
-    res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
+    next(err);
   }
 };
 
-const createUser = async (req, res) => {
+const createUser = async (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  if (!email || !password) {
+    //res.status(400).send({ message: 'Неправильные логин или пароль (!email || !password) ' });
+
+    next(new BadRequestError('Неправильные логин или пароль (!email || !password)'));
+    return;
+  }
   try {
-    const { name, about, avatar } = req.body;
-    const user = new User({ name, about, avatar });
+    const hash = await bcrypt.hash(password, SALT_ROUNDS);
+    const user = new User({
+      name, about, avatar, email, password: hash,
+    });
     res.status(201).send(await user.save());
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(400).send({
-        message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`,
-      });
+      next(new BadRequestError('Произошла ошибка. Поля должны быть заполнены createUser'));
       return;
     }
-    res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
+    if (err.code === DUPLICATE_MONGOOSE_ERROR_CODE) {
+      next(new ConflictError('Пользователь уже существует (DUPLICATE_MONGOOSE_ERROR_CODE)'));
+      // res.status(409).send({
+      //   message: `Произошла ошибка. Пользователь уже существует: ${err.message}`,
+      // });
+      return;
+    }
+    next(err);
   }
 };
 
-const updateUser = async (req, res) => {
+const login = async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    next(new BadRequestError('Неправильные логин или пароль login (!email || !password)'));
+    //res.status(400).send({ message: 'Неправильные логин или пароль' });
+    return;
+  }
+  try {
+    const user = await User.findOne({ email }).select('+password');
+    if (!user) {
+      next(new UnauthorizedError('Неправильные логин или пароль if (!user)'));
+      //res.status(401).send({ message: 'Неправильные логин или пароль' });
+      return;
+    }
+    const isValidPassword = await bcrypt.compare(password, user.password);  // сравниваем переданный пароль и хеш из базы
+    if (!isValidPassword) {
+      next(new UnauthorizedError('Неправильные логин или пароль (!isValidPassword)'));
+      //res.status(401).send({ message: 'Неправильные логин или пароль' });
+      return;
+    }
+    const token = await getToken(user._id);
+    res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: true,
+      });
+    console.log(token);
+    console.log(user._id);
+    console.log(req.cookies.jwt);
+    //.send({ message: 'Успешная авторизация' });
+    res.status(200).send({ token });
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      next(new BadRequestError('Поля должны быть заполнены ValidationError login'));
+      // res.status(400).send({
+      //   message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`,
+      // });
+      return;
+    }
+    next(err);
+  }
+};
+
+const updateUser = async (req, res, next) => {
   try {
     const { name, about } = req.body;
     const user = await User.findByIdAndUpdate(
@@ -62,25 +146,27 @@ const updateUser = async (req, res) => {
     res.status(200).send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(400).send({
-        message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`,
-      });
+      next(new BadRequestError('Поля должны быть заполнены \'ValidationError\' updateUser'));
+      //res.status(400).send({
+      //   message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`,
+      // });
       return;
     }
-    res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
+    next(err);
   }
 };
 
-const updateAvatar = async (req, res) => {
+const updateAvatar = async (req, res, next) => {
   const { avatar } = req.body;
   try {
-    const user = await User.findByIdAndUpdate(req.user._id, { avatar }, { new: true });
+    const user = await User.findByIdAndUpdate(req.userId, { avatar }, { new: true });
     res.status(200).send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(400).send({
-        message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`,
-      });
+      next(new BadRequestError('Поля должны быть заполнены \'ValidationError\' updateAvatar'));
+      // res.status(400).send({
+      //   message: `Произошла ошибка. Поля должны быть заполнены: ${err.message}`,
+      // });
       return;
     }
     /// /// ??????????????
@@ -90,7 +176,7 @@ const updateAvatar = async (req, res) => {
     //   });
     //   return;
     // }
-    res.status(500).send({ message: `На сервере произошла ошибка: ${err.message}` });
+    next(err);
   }
 };
 
@@ -100,4 +186,6 @@ module.exports = {
   createUser,
   updateUser,
   updateAvatar,
+  login,
+  getCurrentUser,
 };
