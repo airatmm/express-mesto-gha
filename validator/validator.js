@@ -4,9 +4,9 @@ const { celebrate, Joi } = require('celebrate');
 // post /signup createUser
 const userValidation = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    about: Joi.string().required().min(2).max(30),
-    avatar: Joi.string().required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string(),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
@@ -44,24 +44,28 @@ const userIdValidation = celebrate({
     id: Joi.string().length(24).hex().required(),
   }),
 });
+// get /users/:userId getUserByID
+const paramsUserByIdValidation = celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().length(24).hex().required(),
+  }),
+});
 
 // CARDS
 // post /cards createCards
-const cardsValidation = celebrate({
+const cardValidation = celebrate({
   body: Joi.object().keys({
     link: Joi.string().required(),
     name: Joi.string().required().min(2).max(30),
   }),
 });
 
-// GENERAL
-// get /users/:userId getUserByID
 // delete /cards/:cardId deleteCard
 // delete /cards/:cardId/likes dislikeCard
 // put /cards/:cardId/likes likeCard
-const paramsByIdValidation = celebrate({
+const paramsCardByIdValidation = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().length(24).hex().required(),
+    cardId: Joi.string().length(24).hex().required(),
   }),
 });
 
@@ -70,7 +74,8 @@ module.exports = {
   loginValidation,
   userUpdateValidation,
   avatarUpdateValidation,
-  cardsValidation,
   userIdValidation,
-  paramsByIdValidation,
+  paramsUserByIdValidation,
+  cardValidation,
+  paramsCardByIdValidation
 };
