@@ -2,7 +2,7 @@ const { celebrate, Joi } = require('celebrate');
 
 // USERS
 // post /signup createUser
-const userValidation = celebrate({
+const validateUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
@@ -13,7 +13,7 @@ const userValidation = celebrate({
 });
 
 // post /signin login
-const loginValidation = celebrate({
+const validateLogin = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
@@ -21,7 +21,7 @@ const loginValidation = celebrate({
 });
 
 // path /users/me updateUser
-const userUpdateValidation = celebrate({
+const validateUserUpdate = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
     about: Joi.string().min(2).max(30).required(),
@@ -32,20 +32,20 @@ const userUpdateValidation = celebrate({
 // avatar: Joi.string().regex(/(http|https):\/\/(www)?\.?([A-Za-z0-9.-]+)\.([A-z]{2,})
 // ((?:\/[+~%/.\w-_]*)?\??(?:[-=&;%@.\w_]*)#?(?:[\w]*))?/)
 // .required(),
-const avatarUpdateValidation = celebrate({
+const validateAvatarUpdate = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().required(),
   }),
 });
 
 // get /users/me getCurrentUser
-const userIdValidation = celebrate({
+const validateUserId = celebrate({
   body: Joi.object().keys({
     id: Joi.string().length(24).hex().required(),
   }),
 });
 // get /users/:userId getUserByID
-const paramsUserByIdValidation = celebrate({
+const validateParamsUserById = celebrate({
   params: Joi.object().keys({
     userId: Joi.string().length(24).hex().required(),
   }),
@@ -53,7 +53,7 @@ const paramsUserByIdValidation = celebrate({
 
 // CARDS
 // post /cards createCards
-const cardValidation = celebrate({
+const validateCard = celebrate({
   body: Joi.object().keys({
     link: Joi.string().required(),
     name: Joi.string().required().min(2).max(30),
@@ -63,19 +63,19 @@ const cardValidation = celebrate({
 // delete /cards/:cardId deleteCard
 // delete /cards/:cardId/likes dislikeCard
 // put /cards/:cardId/likes likeCard
-const paramsCardByIdValidation = celebrate({
+const validateParamsCardById = celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).hex().required(),
   }),
 });
 
 module.exports = {
-  userValidation,
-  loginValidation,
-  userUpdateValidation,
-  avatarUpdateValidation,
-  userIdValidation,
-  paramsUserByIdValidation,
-  cardValidation,
-  paramsCardByIdValidation,
+  validateUser,
+  validateLogin,
+  validateUserUpdate,
+  validateAvatarUpdate,
+  validateUserId,
+  validateParamsUserById,
+  validateCard,
+  validateParamsCardById,
 };

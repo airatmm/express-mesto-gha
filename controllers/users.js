@@ -130,7 +130,7 @@ const updateUser = async (req, res, next) => {
   try {
     const { name, about } = req.body;
     const user = await User.findByIdAndUpdate(
-      req.user._id,
+      req.userId,
       { name, about },
       { new: true, runValidators: true },
     );

@@ -3,8 +3,8 @@ const express = require('express');
 const cards = express.Router();
 
 const {
-  cardValidation,
-  paramsCardByIdValidation,
+  validateCard,
+  validateParamsCardById,
 } = require('../validator/validator');
 
 const {
@@ -12,10 +12,10 @@ const {
 } = require('../controllers/cards');
 
 cards.get('/cards', getCard);
-cards.post('/cards', cardValidation, createCard);
-cards.delete('/cards/:cardId', paramsCardByIdValidation, deleteCard);
-cards.put('/cards/:cardId/likes', paramsCardByIdValidation, likeCard);
-cards.delete('/cards/:cardId/likes', paramsCardByIdValidation, dislikeCard);
+cards.post('/cards', validateCard, createCard);
+cards.delete('/cards/:cardId', validateParamsCardById, deleteCard);
+cards.put('/cards/:cardId/likes', validateParamsCardById, likeCard);
+cards.delete('/cards/:cardId/likes', validateParamsCardById, dislikeCard);
 
 module.exports = {
   cards,
