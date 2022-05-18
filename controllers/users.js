@@ -75,6 +75,7 @@ const createUser = async (req, res, next) => {
     const user = new User({
       name, about, avatar, email, password: hash,
     });
+    // delete user.password
     res.status(201).send(await user.save());
   } catch (err) {
     if (err.name === 'ValidationError') {

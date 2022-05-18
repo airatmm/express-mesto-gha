@@ -3,13 +3,11 @@ const mongoose = require('mongoose');
 
 const { PORT = 3000 } = process.env; // Слушаем 3000 порт
 const cookieParser = require('cookie-parser');
-
 const { errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const { users } = require('./routes/users');
 const { cards } = require('./routes/cards');
-
 const { validateUser, validateLogin } = require('./validator/validator');
 
 const app = express();
@@ -30,6 +28,7 @@ async function main() {
   // мидлвэр c методом express.json(),
   // встроенный в express для распознавания входящего объекта запроса как объекта JSON.
   app.use(express.json());
+
   app.post('/signin', validateLogin, login);
   app.post('/signup', validateUser, createUser);
 
