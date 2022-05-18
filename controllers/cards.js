@@ -3,7 +3,6 @@ const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
-
 const getCard = async (req, res, next) => {
   try {
     const cards = await Card.find({}).populate('owner').exec();
@@ -34,13 +33,13 @@ const createCard = async (req, res, next) => {
 const deleteCard = async (req, res, next) => {
   try {
     const card = await Card.findByIdAndDelete(req.params.cardId);
-    //const owner = req.userId;
+    // const owner = req.userId;
     if (!card) {
       next(new NotFoundError('Нет карточки с таким id deleteCard'));
-      //res.status(404).send({ message: 'Нет карточки с таким id' });
+      // res.status(404).send({ message: 'Нет карточки с таким id' });
       return;
     }
-    if(req.params.cardId !== req.userId) {
+    if (req.params.cardId !== req.userId) {
       console.log(req.params.cardId);
       console.log(req.userId);
       next(new ForbiddenError('Нельзя удалить чужие карточки'));
@@ -50,7 +49,7 @@ const deleteCard = async (req, res, next) => {
   } catch (err) {
     if (err.name === 'CastError') {
       next(new BadRequestError('Некорректный id карточки deleteCard'));
-      //res.status(400).send({ message: 'Некорректный id карточки' });
+      // res.status(400).send({ message: 'Некорректный id карточки' });
       return;
     }
     next(err);
@@ -66,14 +65,14 @@ const likeCard = async (req, res, next) => {
     );
     if (!like) {
       next(new NotFoundError('Нет карточки с таким id likeCard'));
-      //res.status(404).send({ message: 'Нет карточки с таким id' });
+      // res.status(404).send({ message: 'Нет карточки с таким id' });
       return;
     }
     res.status(200).send(like);
   } catch (err) {
     if (err.name === 'CastError') {
       next(new BadRequestError('Некорректный id карточки likeCard'));
-      //res.status(400).send({ message: 'Некорректный id карточки' });
+      // res.status(400).send({ message: 'Некорректный id карточки' });
       return;
     }
     next(err);
@@ -89,14 +88,14 @@ const dislikeCard = async (req, res, next) => {
     );
     if (!like) {
       next(new NotFoundError('Нет карточки с таким id dislikeCard'));
-      //res.status(404).send({ message: 'Нет карточки с таким id' });
+      // res.status(404).send({ message: 'Нет карточки с таким id' });
       return;
     }
     res.status(200).send(like);
   } catch (err) {
     if (err.name === 'CastError') {
       next(new BadRequestError('Некорректный id карточки dislikeCard'));
-      //res.status(400).send({ message: 'Некорректный id карточки' });
+      // res.status(400).send({ message: 'Некорректный id карточки' });
       return;
     }
     next(err);

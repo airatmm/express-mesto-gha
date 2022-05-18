@@ -4,16 +4,15 @@ const mongoose = require('mongoose');
 const { PORT = 3000 } = process.env; // Слушаем 3000 порт
 const cookieParser = require('cookie-parser');
 
-const auth = require('./middlewares/auth');
 const { errors } = require('celebrate');
+const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const { users } = require('./routes/users');
 const { cards } = require('./routes/cards');
 
-
 const app = express();
 
-app.use(cookieParser()) //подключаем парсер кук как мидлвэр
+app.use(cookieParser()); // подключаем парсер кук как мидлвэр
 
 // подключаемся к серверу mongo
 async function main() {
@@ -30,7 +29,8 @@ async function main() {
 
   // app.use((req, res, next) => {
   //   req.user = {
-  //     _id: '62825e415b228a6658d70b4c', // вставьте сюда _id созданного в предыдущем пункте пользователя, временное решение авторизации
+  //     _id: '62825e415b228a6658d70b4c',
+  // вставьте сюда _id созданного в предыдущем пункте пользователя, временное решение авторизации
   //   };
   //   next();
   // });
