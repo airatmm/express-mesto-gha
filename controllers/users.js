@@ -150,7 +150,11 @@ const updateUser = async (req, res, next) => {
 const updateAvatar = async (req, res, next) => {
   const { avatar } = req.body;
   try {
-    const user = await User.findByIdAndUpdate(req.userId, { avatar }, { new: true });
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { avatar },
+      { new: true, runValidators: true },
+    );
     res.status(200).send(user);
   } catch (err) {
     if (err.name === 'ValidationError') {

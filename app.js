@@ -10,9 +10,9 @@ const { login, createUser } = require('./controllers/users');
 const { users } = require('./routes/users');
 const { cards } = require('./routes/cards');
 
-const app = express();
+const { userValidation, loginValidation } = require('./validator/validator');
 
-app.use(cookieParser()); // подключаем парсер кук как мидлвэр
+const app = express();
 
 // подключаемся к серверу mongo
 async function main() {
@@ -21,26 +21,17 @@ async function main() {
     useUnifiedTopology: false,
   });
 
-  // перед сдачей проекта удалить
-  // app.use((req, res, next) => {
-  //   console.log(req.method, req.url);
-  //   next();
-  // });
-
-  // app.use((req, res, next) => {
-  //   req.user = {
-  //     _id: '62825e415b228a6658d70b4c',
-  // вставьте сюда _id созданного в предыдущем пункте пользователя, временное решение авторизации
-  //   };
-  //   next();
-  // });
+  app.use(cookieParser()); // подключаем парсер кук как мидлвэр
 
   app.get('/', (req, res) => {
     res.send(req.body);
   });
 
-  app.post('/signin', express.json(), login);
-  app.post('/signup', express.json(), createUser);
+  // мидлвэр c методом express.json(),
+  // встроенный в express для распознавания входящего объекта запроса как объекта JSON.
+  app.use(express.json());
+  app.post('/signin', loginValidation, login);
+  app.post('/signup', userValidation, createUser);
 
   app.use(auth); // защищаем все роуты ниже, нет доступа неавторизованным пользователям
   app.use('/', users);
