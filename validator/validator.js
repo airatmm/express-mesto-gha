@@ -77,5 +77,5 @@ module.exports = {
   userIdValidation,
   paramsUserByIdValidation,
   cardValidation,
-  paramsCardByIdValidation
+  paramsCardByIdValidation,
 };
