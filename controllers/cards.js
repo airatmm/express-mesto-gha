@@ -33,13 +33,13 @@ const createCard = async (req, res, next) => {
 const deleteCard = async (req, res, next) => {
   try {
     const card = await Card.findByIdAndDelete(req.params.cardId);
-    const cardOwner = await card.owner.toString();
-    console.log(card);
+    // console.log(card);
     if (!card) {
       next(new NotFoundError('Нет карточки с таким id deleteCard'));
       //  res.status(404).send({ message: 'Нет карточки с таким id' });
       return;
     }
+    const cardOwner = card.owner.toString();
     if (cardOwner !== req.userId) {
       next(new ForbiddenError('Нельзя удалить чужие карточки'));
       return;
