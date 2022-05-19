@@ -67,7 +67,7 @@ const createUser = async (req, res, next) => {
   if (!email || !password) {
     // res.status(400).send({ message: 'Неправильные логин или пароль (!email || !password) ' });
 
-    next(new BadRequestError('Неправильные логин или пароль (!email || !password)'));
+    next(new BadRequestError('Неправильные логин или пароль (!email || !password) createUser'));
     return;
   }
   try {
@@ -75,8 +75,9 @@ const createUser = async (req, res, next) => {
     const user = new User({
       name, about, avatar, email, password: hash,
     });
-    // delete user.password
-    res.status(201).send(await user.save());
+    const savedUser = await user.save();
+    const { password: removedPassword, ...result } = savedUser.toObject();
+    res.status(201).send(result);
   } catch (err) {
     if (err.name === 'ValidationError') {
       next(new BadRequestError('Произошла ошибка. Поля должны быть заполнены createUser'));
@@ -89,6 +90,7 @@ const createUser = async (req, res, next) => {
       // });
       return;
     }
+    console.log(err);
     next(err);
   }
 };
