@@ -9,7 +9,11 @@ const {
   validateParamsUserById,
 } = require('../validator/validator');
 const {
-  getUsers, getUserByID, updateUser, updateAvatar, getCurrentUser,
+  getUsers,
+  getUserByID,
+  updateUser,
+  updateAvatar,
+  getCurrentUser,
 } = require('../controllers/users');
 
 users.get('/users', getUsers);

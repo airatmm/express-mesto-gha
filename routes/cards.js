@@ -8,7 +8,11 @@ const {
 } = require('../validator/validator');
 
 const {
-  getCard, createCard, deleteCard, likeCard, dislikeCard,
+  getCard,
+  createCard,
+  deleteCard,
+  likeCard,
+  dislikeCard,
 } = require('../controllers/cards');
 
 cards.get('/cards', getCard);

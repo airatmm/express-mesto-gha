@@ -9,8 +9,6 @@ module.exports = async (req, res, next) => {
   if (!authorization || !authorization.startsWith('Bearer ')) {
     next(new UnauthorizedError('Необходима авторизация'));
     return;
-    // .status(401)
-    // .send({ message: 'Необходима авторизация' });
   }
 
   const token = await authorization.replace('Bearer ', '');
@@ -22,15 +20,7 @@ module.exports = async (req, res, next) => {
   } catch (err) {
     next(new UnauthorizedError('Необходима авторизация'));
     return;
-    // return res
-    //   .status(401)
-    //   .send({ message: 'Необходима авторизация' });
   }
-
   req.user = payload; // записываем пейлоуд в объект запроса
-  console.log(payload);
-  console.log(req.userId);
-  console.log('auth.js');
-
   next(); // пропускаем запрос дальше
 };
