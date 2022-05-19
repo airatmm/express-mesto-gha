@@ -30,7 +30,7 @@ module.exports = async (req, res, next) => {
   req.user = payload; // записываем пейлоуд в объект запроса
   console.log(payload);
   console.log(req.userId);
-  console.log('auth');
+  console.log('auth.js');
 
   next(); // пропускаем запрос дальше
 };
