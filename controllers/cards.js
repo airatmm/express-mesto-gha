@@ -28,18 +28,20 @@ const createCard = async (req, res, next) => {
 };
 
 const deleteCard = async (req, res, next) => {
+  const { cardId } = req.params;
   try {
-    const card = await Card.findByIdAndDelete(req.params.cardId);
-    if (!card) {
+    const cardById = await Card.findById(cardId);
+    if (!cardById) {
       next(new NotFoundError('Нет карточки с таким id'));
       return;
     }
-    const cardOwner = card.owner.toString();
+    const cardOwner = cardById.owner.toString();
     if (cardOwner !== req.userId) {
       next(new ForbiddenError('Нельзя удалить чужие карточки'));
       return;
     }
-    res.status(200).send(card);
+    const cardDelete = await Card.findByIdAndDelete(cardId);
+    res.status(200).send(cardDelete);
   } catch (err) {
     if (err.name === 'CastError') {
       next(new BadRequestError('Некорректный id карточки'));

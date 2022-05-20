@@ -3,12 +3,15 @@ const mongoose = require('mongoose');
 
 const { PORT = 3000 } = process.env; // Слушаем 3000 порт
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 const { errors } = require('celebrate');
 const auth = require('./middlewares/auth');
+const handleError = require('./middlewares/handleError');
 const { login, createUser } = require('./controllers/users');
 const { users } = require('./routes/users');
 const { cards } = require('./routes/cards');
 const { validateUser, validateLogin } = require('./validator/validator');
+const NotFoundError = require('./errors/NotFoundError');
 
 const app = express();
 
@@ -18,6 +21,8 @@ async function main() {
     useNewUrlParser: true,
     useUnifiedTopology: false,
   });
+
+  app.use(helmet());
 
   app.use(cookieParser()); // подключаем парсер кук как мидлвэр
 
@@ -38,15 +43,11 @@ async function main() {
 
   app.use(errors()); // обработчик ошибок celebrate
 
-  app.use((req, res) => {
-    res.status(404).send({ message: 'Ooops! Page not found' });
+  app.use(() => {
+    throw new NotFoundError('Ой! Такой страницы нет');
   });
 
-  app.use((err, req, res, next) => {
-    const { statusCode = 500, message } = err;
-    res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
-    next();
-  });
+  app.use(handleError); // централизованная обработка ошибок
 
   app.listen(PORT, () => {
     // Если всё работает, консоль покажет, какой порт приложение слушает

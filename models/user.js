@@ -39,7 +39,6 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
     select: false,
   },
 });
@@ -58,12 +57,12 @@ userSchema.statics.findUserByCredentials = function (email, password) {
     // но для аутентификации хэш пароля нужен (метод .select + 'password')
     .then((user) => {
       if (!user) {
-        throw new UnauthorizedError({ message: 'Неправильные email или пароль' });
+        throw new UnauthorizedError('Неправильные email или пароль');
       }
       return bcrypt.compare(password, user.password) // сравниваем переданный пароль и хеш из базы
         .then((matched) => {
           if (!matched) {
-            throw new UnauthorizedError({ message: 'Неправильные email или пароль' });
+            throw new UnauthorizedError('Неправильные email или пароль');
           }
           return user;
         });

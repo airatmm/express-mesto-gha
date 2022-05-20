@@ -84,7 +84,7 @@ const createUser = async (req, res, next) => {
 const login = async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    next(new BadRequestError('Неправильные логин или пароль'));
+    next(new BadRequestError('Поля логин и пароль обязательны'));
     return;
   }
   try {
@@ -97,10 +97,6 @@ const login = async (req, res, next) => {
     });
     res.status(200).send({ token });
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      next(new BadRequestError('Поля должны быть заполнены'));
-      return;
-    }
     next(err);
   }
 };

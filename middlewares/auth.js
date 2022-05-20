@@ -4,14 +4,7 @@ const JWT_SECRET = 'some-secret-key';
 const UnauthorizedError = require('../errors/UnauthorizedError');
 
 module.exports = async (req, res, next) => {
-  const { authorization } = req.headers;
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    next(new UnauthorizedError('Необходима авторизация'));
-    return;
-  }
-
-  const token = await authorization.replace('Bearer ', '');
+  const token = req.cookies.jwt;
   let payload;
 
   try {
