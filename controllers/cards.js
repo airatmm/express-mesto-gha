@@ -40,7 +40,7 @@ const deleteCard = async (req, res, next) => {
       next(new ForbiddenError('Нельзя удалить чужие карточки'));
       return;
     }
-    const cardDelete = await Card.findByIdAndDelete(cardId);
+    const cardDelete = await Card.findByIdAndDelete(cardById);
     res.status(200).send(cardDelete);
   } catch (err) {
     if (err.name === 'CastError') {
