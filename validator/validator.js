@@ -8,7 +8,7 @@ const validateUser = celebrate({
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().regex(/(http|https):\/\/(www)?\.?([A-Za-z0-9.-]+)\.([A-z]{2,})((?:\/[+~%/.\w-_]*)?\??(?:[-=&;%@.\w_]*)#?(?:[\w]*))?/),
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
+    password: Joi.string().required(),
   }),
 });
 
@@ -16,7 +16,7 @@ const validateUser = celebrate({
 const validateLogin = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
+    password: Joi.string().required(),
   }),
 });
 
@@ -35,12 +35,6 @@ const validateAvatarUpdate = celebrate({
   }),
 });
 
-// get /users/me getCurrentUser
-const validateUserId = celebrate({
-  body: Joi.object().keys({
-    id: Joi.string().length(24).hex().required(),
-  }),
-});
 // get /users/:userId getUserByID
 const validateParamsUserById = celebrate({
   params: Joi.object().keys({
@@ -71,7 +65,6 @@ module.exports = {
   validateLogin,
   validateUserUpdate,
   validateAvatarUpdate,
-  validateUserId,
   validateParamsUserById,
   validateCard,
   validateParamsCardById,
