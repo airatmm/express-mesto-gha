@@ -41,7 +41,8 @@ async function main() {
   app.use('/', users);
   app.use('/', cards);
 
-  // Так как используется хранение токена в cookies к след работе можно будет добавить роут signout, который очищал бы куки
+  // Так как используется хранение токена в cookies
+  // к след работе можно будет добавить роут signout, который очищал бы куки
   app.get('/signout', (req, res) => {
     res.status(200).clearCookie('jwt').send({ message: 'Выход' });
   });
