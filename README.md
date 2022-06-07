@@ -1,6 +1,6 @@
 [![Tests](https://github.com/airatmm/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/airatmm/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/airatmm/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/airatmm/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
 
-# Проект Mesto фронтенд + бэкенд (#13, #14)
+# Проект Mesto бэкенд (#13, #14)
 
 ## Стек
 
